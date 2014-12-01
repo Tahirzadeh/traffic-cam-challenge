@@ -14,8 +14,8 @@
 $(document).ready(function() {
 
     var mapElem = document.getElementById('map');
-    var center = {lat: 47.6, lng: -122.3}
-    var map = new google.maps.Map(mapElem, { 
+    var center = {lat: 47.6, lng: -122.3} //centers map at location
+    var map = new google.maps.Map(mapElem, { //constructs google map
         center: center,
         zoom: 12
     });
@@ -23,10 +23,10 @@ $(document).ready(function() {
     var cameras;
     var markers = [];
 
-    $.getJSON('http://data.seattle.gov/resource/65fc-btcc.json')
+    $.getJSON('http://data.seattle.gov/resource/65fc-btcc.json') //gets camera data array
     .done(function(data) {
 		cameras = data;
-		data.forEach(function(cameras) {
+		data.forEach(function(cameras) { //sets marker positions
 			var marker = new google.maps.Marker({
 				position: {
 					lat: Number(cameras.location.latitude),
@@ -36,22 +36,19 @@ $(document).ready(function() {
 			});
 			markers.push(marker);
 
-		    google.maps.event.addListener(marker, 'click', function() {
+		    google.maps.event.addListener(marker, 'click', function() { //content for infoWindow on click
 		        var html = '<p>' + cameras.cameralabel + '</p>';
 		       	html += '<img src="' + cameras.imageurl.url + '"/>';
-
 		        infoWindow.setContent(html);
 		        infoWindow.open(map, this);
 		        map.panTo(this.getPosition());
 		    });
 
-		    //infoWindow close
-			google.maps.event.addListener(map, 'click', function(){
-				infoWindow.close();
+		    google.maps.event.addListener(map, 'click', function(){
+				infoWindow.close(); //closes infoWindow when click occurs
 			});
 
-			//camera search
-			$('#search').bind('search keyup', function() {
+			$('#search').bind('search keyup', function() { //search function for camera filter
 				var searchString = cameras.cameralabel.toLowerCase().indexOf(this.value.toLowerCase());
 				if(searchString >= 0){
 					marker.setMap(map);
@@ -63,10 +60,10 @@ $(document).ready(function() {
 		});
 	})
 
-	.fail(function(error) {
+	.fail(function(error) { //fail function
         console.log('error');
         alert("There is an error.")
     })
 
-    $('#map').height($(window).height() - $('#map').position().top - 20);
+    $('#map').height($(window).height() - $('#map').position().top - 20); //sets size window
 });
